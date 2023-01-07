@@ -2,6 +2,7 @@ package com.binhow.video.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.binhow.video.entity.Dto.UserDto;
+import com.binhow.video.entity.User;
 import com.binhow.video.service.IUserService;
 import com.binhow.video.vo.R;
 import io.swagger.annotations.Api;
@@ -30,7 +31,7 @@ public class UserController {
 
     private static QueryWrapper<User> wrapper() {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_status", 1);
+        wrapper.eq("status", 1);
         return wrapper;
     }
 

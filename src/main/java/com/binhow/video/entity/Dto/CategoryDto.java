@@ -22,11 +22,9 @@ public class CategoryDto implements Serializable {
 
     private Long id;
 
-    private String categoryName;
+    private String name;
 
-    private Long categoryParent;
-
-    private Boolean categoryStatus;
+    private Long parentId;
 
     private List<CategoryDto> childCategoryList;
 

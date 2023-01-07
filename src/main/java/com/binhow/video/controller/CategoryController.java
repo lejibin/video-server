@@ -1,6 +1,7 @@
 package com.binhow.video.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.binhow.video.entity.Category;
 import com.binhow.video.entity.Dto.CategoryDto;
 import com.binhow.video.service.ICategoryService;
 import com.binhow.video.vo.R;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author Richard
@@ -30,7 +31,7 @@ public class CategoryController {
 
     private static QueryWrapper<Category> wrapper() {
         QueryWrapper<Category> wrapper = new QueryWrapper<>();
-        wrapper.eq("category_status", 1);
+        wrapper.eq("status", 1).ne("name", "default");
         return wrapper;
     }
 
@@ -40,7 +41,7 @@ public class CategoryController {
         List<CategoryDto> categoryDtoList = getCategoryDtoList();
         if (categoryDtoList != null) {
             if (id == null) {
-                categoryDtoList = categoryDtoList.stream().filter(categoryDto -> categoryDto.getCategoryParent().equals(0L)).collect(Collectors.toList());
+                categoryDtoList = categoryDtoList.stream().filter(categoryDto -> categoryDto.getParentId().equals(0L)).collect(Collectors.toList());
             } else {
                 categoryDtoList = categoryDtoList.stream().filter(categoryDto -> categoryDto.getId().equals(id)).collect(Collectors.toList());
             }
@@ -70,6 +71,6 @@ public class CategoryController {
     }
 
     public static List<CategoryDto> getChildCategoryDtoList(CategoryDto categoryDto, List<CategoryDto> categoryDtoList) {
-        return categoryDtoList.stream().filter(dto -> dto.getCategoryParent().equals(categoryDto.getId())).collect(Collectors.toList());
+        return categoryDtoList.stream().filter(dto -> dto.getParentId().equals(categoryDto.getId())).collect(Collectors.toList());
     }
 }

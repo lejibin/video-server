@@ -11,20 +11,16 @@ import lombok.Setter;
  * </p>
  *
  * @author Richard
- * @since 2022-12-05
+ * @since 2022-12-30
  */
 @Getter
 @Setter
-public class UserDto implements Serializable {
-    
+public class AreaDto implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
-    private String username;
-
-    private String rule;
-
-    private Boolean status;
+    private String name;
 
 }

@@ -2,7 +2,13 @@ package com.binhow.video.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.binhow.video.entity.Category;
+import com.binhow.video.entity.Dto.VideoDto;
+import com.binhow.video.entity.Video;
+import com.binhow.video.entity.VideoCategory;
+import com.binhow.video.mapper.VideoMapper;
 import com.binhow.video.service.ICategoryService;
+import com.binhow.video.service.IVideoCategoryService;
 import com.binhow.video.service.IVideoService;
 import com.binhow.video.vo.R;
 import io.swagger.annotations.Api;
@@ -12,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -26,87 +33,65 @@ import java.util.List;
 @RequestMapping("/video")
 public class VideoController {
     @Resource
-    private IVideoService iVideoService;
-    @Resource
     private ICategoryService iCategoryService;
+    @Resource
+    private IVideoCategoryService iVideoCategoryService;
+    @Resource
+    private VideoMapper videoMapper;
+    @Resource
+    private IVideoService iVideoService;
 
     private static QueryWrapper<Video> wrapper() {
         QueryWrapper<Video> wrapper = new QueryWrapper<>();
-        wrapper.eq("video_status", 1).orderByDesc("video_date");
+        wrapper.eq("status", 1).orderByDesc("date");
         return wrapper;
     }
 
-    @ApiOperation("获取视频列表")
-    @GetMapping("")
-    public R all() {
-        return R.error();
-    }
-
-    @ApiOperation("获取最新视频列表")
-    @GetMapping("/newList")
-    public R newList(@RequestParam(required = false, defaultValue = "1") Long categoryId, @RequestParam(required = false, defaultValue = "1") Integer pageNo, @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        if (pageSize > 50) {
-            pageSize = 50;
+    @ApiOperation("获取视频信息")
+    @GetMapping
+    public R getVideo(@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long id, @RequestParam(required = false, defaultValue = "1") Integer pageNo, @RequestParam(required = false, defaultValue = "50") Integer pageSize) {
+        if (id != null) {
+            VideoDto videoDto = videoMapper.getVideo(wrapper().in("id", id));
+            if (videoDto != null) {
+                return R.success().state("video", videoDto);
+            }
+            return R.error();
+        }
+        if (pageSize > 100) {
+            pageSize = 100;
         }
         Page<Video> page = new Page<>(pageNo, pageSize);
-        Page<Video> newList;
-        if (categoryId == 1) {
-            newList = iVideoService.page(page, wrapper());
-        } else {
-            List<Long> categoryIdList = new ArrayList<>();
-            categoryIdList.add(categoryId);
-            getCategoryIdList(categoryId, categoryIdList);
-            newList = iVideoService.page(page, wrapper().in("video_category", categoryIdList));
-        }
-        if (newList.getRecords().size() > 0) {
-            return R.success().state("newList", newList);
-        }
-        return R.error();
-    }
-
-    @ApiOperation("按分类获取视频列表")
-    @GetMapping("/getByCategory")
-    public R getByCategory(@RequestParam Long categoryId, @RequestParam(required = false, defaultValue = "1") Integer pageNo, @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        if (pageSize > 50) {
-            pageSize = 50;
-        }
-        List<Long> categoryIdList = new ArrayList<>();
-        categoryIdList.add(categoryId);
-        getCategoryIdList(categoryId, categoryIdList);
-        Page<Video> page = new Page<>(pageNo, pageSize);
-        Page<Video> videoList = iVideoService.page(page, wrapper().in("video_category", categoryIdList));
-        if (videoList.getRecords().size() > 0) {
-            return R.success().state("videoList", videoList);
+        if (categoryId != null) {
+            Page<Video> videoList;
+            if (categoryId == 1) {
+                videoList = iVideoService.page(page, wrapper());
+            } else {
+                List<Long> categoryIdList = new ArrayList<>();
+                categoryIdList.add(categoryId);
+                getCategoryIdList(categoryId, categoryIdList);
+                List<VideoCategory> videoCategoryList = iVideoCategoryService.list(new QueryWrapper<VideoCategory>().in("category_id", categoryIdList));
+//                List<Long> videoIdList = videoCategoryList.stream().map(videoCategory -> videoCategory.getVideoId()).collect(Collectors.toList());
+                List<Long> videoIdList = videoCategoryList.stream().map(VideoCategory::getVideoId).collect(Collectors.toList());
+                videoList = iVideoService.page(page, wrapper().in("id", videoIdList));
+            }
+            if (videoList.getRecords().size() > 0) {
+                return R.success().state("videoList", videoList);
+            }
+            return R.error();
         }
         return R.error();
     }
-
-    @ApiOperation("按用户获取视频列表")
-    @GetMapping("/getByUser")
-    public R getByUser(@RequestParam Integer userId, @RequestParam(required = false, defaultValue = "1") Integer pageNo, @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        if (pageSize > 50) {
-            pageSize = 50;
-        }
-        Page<Video> page = new Page<>(pageNo, pageSize);
-        Page<Video> videoList = iVideoService.page(page, wrapper().eq("video_user_id", userId));
-        if (videoList.getRecords().size() > 0) {
-            return R.success().state("videoList", videoList);
+    @ApiOperation("获取视频信息")
+    @GetMapping("/yearList")
+    private R getYearList(){
+        List<String> yearList = videoMapper.getYearList();
+        if (yearList.size() > 0) {
+            return R.success().state("yearList", yearList);
         }
         return R.error();
     }
-
-    @ApiOperation("ID获取视频信息")
-    @GetMapping("/{id}")
-    public R getById(@PathVariable String id) {
-        Video video = iVideoService.getOne(wrapper().eq("id", id));
-        if (video != null) {
-            return R.success().state("video", video);
-        }
-        return R.error();
-    }
-
-    public void getCategoryIdList(Long categoryId, List<Long> categoryIdList) {
-        List<Category> childCategoryList = iCategoryService.list(new QueryWrapper<Category>().eq("category_parent", categoryId));
+    private void getCategoryIdList(Long categoryId, List<Long> categoryIdList) {
+        List<Category> childCategoryList = iCategoryService.list(new QueryWrapper<Category>().eq("parent_id", categoryId));
         for (Category childCategory : childCategoryList) {
             Long childCategoryId = childCategory.getId();
             categoryIdList.add(childCategoryId);
