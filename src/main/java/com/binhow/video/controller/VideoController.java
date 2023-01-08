@@ -2,14 +2,10 @@ package com.binhow.video.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.binhow.video.entity.Category;
+import com.binhow.video.entity.*;
 import com.binhow.video.entity.Dto.VideoDto;
-import com.binhow.video.entity.Video;
-import com.binhow.video.entity.VideoCategory;
 import com.binhow.video.mapper.VideoMapper;
-import com.binhow.video.service.ICategoryService;
-import com.binhow.video.service.IVideoCategoryService;
-import com.binhow.video.service.IVideoService;
+import com.binhow.video.service.*;
 import com.binhow.video.vo.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +36,11 @@ public class VideoController {
     private VideoMapper videoMapper;
     @Resource
     private IVideoService iVideoService;
+    @Resource
+    private IVideoAreaService iVideoAreaService;
+
+    @Resource
+    private IVideoLanguageService iVideoLanguageService;
 
     private static QueryWrapper<Video> wrapper() {
         QueryWrapper<Video> wrapper = new QueryWrapper<>();
@@ -49,7 +50,7 @@ public class VideoController {
 
     @ApiOperation("获取视频信息")
     @GetMapping
-    public R getVideo(@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long id, @RequestParam(required = false, defaultValue = "1") Integer pageNo, @RequestParam(required = false, defaultValue = "50") Integer pageSize) {
+    public R getVideo(@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long areaId, @RequestParam(required = false) Long languageId, @RequestParam(required = false) String year, @RequestParam(required = false) Long id, @RequestParam(required = false, defaultValue = "1") Integer pageNo, @RequestParam(required = false, defaultValue = "50") Integer pageSize) {
         if (id != null) {
             VideoDto videoDto = videoMapper.getVideo(wrapper().in("id", id));
             if (videoDto != null) {
@@ -70,9 +71,26 @@ public class VideoController {
                 categoryIdList.add(categoryId);
                 getCategoryIdList(categoryId, categoryIdList);
                 List<VideoCategory> videoCategoryList = iVideoCategoryService.list(new QueryWrapper<VideoCategory>().in("category_id", categoryIdList));
-//                List<Long> videoIdList = videoCategoryList.stream().map(videoCategory -> videoCategory.getVideoId()).collect(Collectors.toList());
                 List<Long> videoIdList = videoCategoryList.stream().map(VideoCategory::getVideoId).collect(Collectors.toList());
-                videoList = iVideoService.page(page, wrapper().in("id", videoIdList));
+                // 地区
+                if (areaId != null) {
+                    List<VideoArea> videoAreaList = iVideoAreaService.list(new QueryWrapper<VideoArea>().eq("area_id", areaId).eq("status", 1));
+                    videoIdList.retainAll(videoAreaList.stream().map(VideoArea::getVideoId).collect(Collectors.toList()));
+                }
+                // 语言
+                if (languageId != null) {
+                    List<VideoLanguage> videoLanguageList = iVideoLanguageService.list(new QueryWrapper<VideoLanguage>().eq("language_id", areaId).eq("status", 1));
+                    videoIdList.retainAll(videoLanguageList.stream().map(VideoLanguage::getVideoId).collect(Collectors.toList()));
+                }
+                // 年份
+                if (year != null) {
+                    wrapper().eq("year", year);
+                }
+                if (videoIdList.size() > 0) {
+                    videoList = iVideoService.page(page, wrapper().in("id", videoIdList));
+                } else {
+                    return R.error();
+                }
             }
             if (videoList.getRecords().size() > 0) {
                 return R.success().state("videoList", videoList);
@@ -81,15 +99,17 @@ public class VideoController {
         }
         return R.error();
     }
+
     @ApiOperation("获取视频信息")
     @GetMapping("/yearList")
-    private R getYearList(){
+    private R getYearList() {
         List<String> yearList = videoMapper.getYearList();
         if (yearList.size() > 0) {
             return R.success().state("yearList", yearList);
         }
         return R.error();
     }
+
     private void getCategoryIdList(Long categoryId, List<Long> categoryIdList) {
         List<Category> childCategoryList = iCategoryService.list(new QueryWrapper<Category>().eq("parent_id", categoryId));
         for (Category childCategory : childCategoryList) {
