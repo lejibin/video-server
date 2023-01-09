@@ -83,11 +83,12 @@ public class VideoController {
                     videoIdList.retainAll(videoLanguageList.stream().map(VideoLanguage::getVideoId).collect(Collectors.toList()));
                 }
                 // 年份
+                QueryWrapper<Video> w = wrapper();
                 if (year != null) {
-                    wrapper().eq("year", year);
+                    w = w.eq("year", year);
                 }
                 if (videoIdList.size() > 0) {
-                    videoList = iVideoService.page(page, wrapper().in("id", videoIdList));
+                    videoList = iVideoService.page(page, w.in("id", videoIdList));
                 } else {
                     return R.error();
                 }
@@ -109,7 +110,16 @@ public class VideoController {
         }
         return R.error();
     }
-
+    @ApiOperation("搜索视频信息")
+    @GetMapping("/search")
+    private R search(@RequestParam String s) {
+        Page<Video> page = new Page<>(1, 50);
+        Page<Video> videoList = iVideoService.page(page, wrapper().like("name", s));
+        if (videoList.getRecords().size() > 0) {
+            return R.success().state("videoList", videoList);
+        }
+        return R.error();
+    }
     private void getCategoryIdList(Long categoryId, List<Long> categoryIdList) {
         List<Category> childCategoryList = iCategoryService.list(new QueryWrapper<Category>().eq("parent_id", categoryId));
         for (Category childCategory : childCategoryList) {
