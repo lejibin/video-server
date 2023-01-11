@@ -31,7 +31,7 @@ public class CategoryController {
 
     private static QueryWrapper<Category> wrapper() {
         QueryWrapper<Category> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", 1).ne("name", "default");
+        wrapper.eq("status", 1).ne("name", "default").eq("filter", 1);
         return wrapper;
     }
 

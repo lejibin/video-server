@@ -6,6 +6,7 @@ import com.binhow.video.entity.*;
 import com.binhow.video.entity.Dto.VideoDto;
 import com.binhow.video.mapper.VideoMapper;
 import com.binhow.video.service.*;
+import com.binhow.video.utils.ListTool;
 import com.binhow.video.vo.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -74,13 +75,15 @@ public class VideoController {
                 List<Long> videoIdList = videoCategoryList.stream().map(VideoCategory::getVideoId).collect(Collectors.toList());
                 // 地区
                 if (areaId != null) {
+                    ListTool listTool = new ListTool();
                     List<VideoArea> videoAreaList = iVideoAreaService.list(new QueryWrapper<VideoArea>().eq("area_id", areaId).eq("status", 1));
-                    videoIdList.retainAll(videoAreaList.stream().map(VideoArea::getVideoId).collect(Collectors.toList()));
+                    videoIdList = listTool.intersection(videoIdList, videoAreaList.stream().map(VideoArea::getVideoId).collect(Collectors.toList()));
                 }
                 // 语言
                 if (languageId != null) {
-                    List<VideoLanguage> videoLanguageList = iVideoLanguageService.list(new QueryWrapper<VideoLanguage>().eq("language_id", areaId).eq("status", 1));
-                    videoIdList.retainAll(videoLanguageList.stream().map(VideoLanguage::getVideoId).collect(Collectors.toList()));
+                    ListTool listTool = new ListTool();
+                    List<VideoLanguage> videoLanguageList = iVideoLanguageService.list(new QueryWrapper<VideoLanguage>().eq("language_id", languageId).eq("status", 1));
+                    videoIdList = listTool.intersection(videoIdList, videoLanguageList.stream().map(VideoLanguage::getVideoId).collect(Collectors.toList()));
                 }
                 // 年份
                 QueryWrapper<Video> w = wrapper();
@@ -110,6 +113,7 @@ public class VideoController {
         }
         return R.error();
     }
+
     @ApiOperation("搜索视频信息")
     @GetMapping("/search")
     private R search(@RequestParam String s) {
@@ -120,6 +124,7 @@ public class VideoController {
         }
         return R.error();
     }
+
     private void getCategoryIdList(Long categoryId, List<Long> categoryIdList) {
         List<Category> childCategoryList = iCategoryService.list(new QueryWrapper<Category>().eq("parent_id", categoryId));
         for (Category childCategory : childCategoryList) {

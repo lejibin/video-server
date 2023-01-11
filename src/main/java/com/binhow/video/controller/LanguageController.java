@@ -33,7 +33,7 @@ public class LanguageController {
     private ILanguageService iLanguageService;
     private static QueryWrapper<Language> wrapper() {
         QueryWrapper<Language> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", 1);
+        wrapper.eq("status", 1).eq("filter", 1);
         return wrapper;
     }
     @ApiOperation("获取语言列表")

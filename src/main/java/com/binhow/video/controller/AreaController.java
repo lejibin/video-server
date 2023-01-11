@@ -34,7 +34,7 @@ public class AreaController {
 
     private static QueryWrapper<Area> wrapper() {
         QueryWrapper<Area> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", 1);
+        wrapper.eq("status", 1).eq("filter", 1);
         return wrapper;
     }
 
