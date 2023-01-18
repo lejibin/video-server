@@ -53,6 +53,8 @@ public class Video implements Serializable {
 
     private String base;
 
+    private Long channelId;
+
     private Boolean comment;
 
     private Boolean status;

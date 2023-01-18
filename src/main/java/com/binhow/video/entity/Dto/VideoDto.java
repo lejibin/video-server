@@ -43,6 +43,10 @@ public class VideoDto implements Serializable {
 
     private String base;
 
+    private Long channelId;
+
+    private Boolean comment;
+
     private List<AreaDto> areaList;
 
     private List<ArtorDto> artorList;

@@ -3,7 +3,7 @@ package com.binhow.video.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.binhow.video.entity.Area;
 import com.binhow.video.entity.Dto.AreaDto;
-import com.binhow.video.service.IAreaService;
+import com.binhow.video.service.impl.AreaServiceImpl;
 import com.binhow.video.vo.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,30 +30,27 @@ import java.util.stream.Collectors;
 @RequestMapping("/area")
 public class AreaController {
     @Resource
-    IAreaService iAreaService;
+    AreaServiceImpl areaService;
 
     private static QueryWrapper<Area> wrapper() {
-        QueryWrapper<Area> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", 1).eq("filter", 1);
-        return wrapper;
+        return new QueryWrapper<Area>().eq("status", 1).eq("filter", 1);
     }
 
     @ApiOperation("获取区域列表")
     @GetMapping
     public R area(@RequestParam(required = false) Long id) {
         if (id == null) {
-            List<Area> areaList = iAreaService.list(wrapper());
+            List<Area> areaList = areaService.list(wrapper());
             if (areaList.size() > 0) {
                 List<AreaDto> areaDtoList = areaList.stream().map(area -> {
-                            AreaDto areaDto = new AreaDto();
-                            BeanUtils.copyProperties(area, areaDto);
-                            return areaDto;
-                        }
-                ).collect(Collectors.toList());
+                    AreaDto areaDto = new AreaDto();
+                    BeanUtils.copyProperties(area, areaDto);
+                    return areaDto;
+                }).collect(Collectors.toList());
                 return R.success().state("areaList", areaDtoList);
             }
         } else {
-            Area area = iAreaService.getOne(wrapper().eq("id", id));
+            Area area = areaService.getOne(wrapper().eq("id", id));
             if (area != null) {
                 AreaDto areaDto = new AreaDto();
                 BeanUtils.copyProperties(area, areaDto);

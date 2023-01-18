@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author Richard
@@ -30,9 +30,7 @@ public class UserController {
     private IUserService iUserService;
 
     private static QueryWrapper<User> wrapper() {
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", 1);
-        return wrapper;
+        return new QueryWrapper<User>().eq("status", 1);
     }
 
     @ApiOperation("获取用户列表")

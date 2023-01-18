@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.binhow.video.entity.Dto.UrlDto;
 import com.binhow.video.entity.Url;
 import com.binhow.video.service.IUrlService;
+import com.binhow.video.service.impl.UrlServiceImpl;
 import com.binhow.video.vo.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,21 +31,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/url")
 public class UrlController {
     @Resource
-    private IUrlService iUrlService;
+    private UrlServiceImpl urlService;
 
     private static QueryWrapper<Url> wrapper() {
-        QueryWrapper<Url> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", 1);
-        return wrapper;
+        return new QueryWrapper<Url>().eq("status", 1);
     }
 
     @ApiOperation("获取链接信息")
     @GetMapping
     public R url(@RequestParam List<String> mapIdList) {
-        List<Url> urlList = iUrlService.list(wrapper().in("map_id", mapIdList));
-        List<UrlDto> urlDtoList;
+        List<Url> urlList = urlService.list(wrapper().in("map_id", mapIdList));
         if (urlList.size() > 0) {
-            urlDtoList = urlList.stream().map(url -> {
+            List<UrlDto> urlDtoList = urlList.stream().map(url -> {
                 UrlDto urlDto = new UrlDto();
                 BeanUtils.copyProperties(url, urlDto);
                 return urlDto;

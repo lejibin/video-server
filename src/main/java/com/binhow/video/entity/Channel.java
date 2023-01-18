@@ -3,28 +3,18 @@ package com.binhow.video.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
 import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * <p>
- *
- * </p>
- *
- * @author Richard
- * @since 2022-12-30
- */
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
-@TableName("v_category")
-@ApiModel(value = "Category对象", description = "")
-public class Category implements Serializable {
-
+@TableName("v_Channel")
+@ApiModel(value = "Channel对象", description = "")
+public class Channel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
@@ -32,11 +22,8 @@ public class Category implements Serializable {
 
     private String name;
 
-    private Long channelId;
-
     private LocalDateTime dateLatest;
 
     private Boolean status;
 
-    private Boolean filter;
 }

@@ -11,18 +11,16 @@ import java.io.Serializable;
  * </p>
  *
  * @author Richard
- * @since 2022-12-05
+ * @since 2022-12-30
  */
 @Getter
 @Setter
-public class CategoryDto implements Serializable {
+public class ChannelDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
     private String name;
-
-    private Long channelId;
 
 }

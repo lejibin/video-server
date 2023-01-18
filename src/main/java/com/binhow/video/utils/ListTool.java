@@ -1,11 +1,14 @@
 package com.binhow.video.utils;
 
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class ListTool {
 
     public List<Long> intersection(List<Long> arr1, List<Long> arr2) {

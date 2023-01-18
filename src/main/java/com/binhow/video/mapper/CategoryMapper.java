@@ -24,8 +24,5 @@ public interface CategoryMapper extends BaseMapper<Category> {
      */
     @Select("select * from v_category left join v_video_category on v_category.id=v_video_category.category_id where v_video_category.video_id=#{videoId}")
     List<CategoryDto> getCategoryListByVideoId(Long videoId);
-
-    @Select("selec * from v_category where parent_id=#{id}")
-    List<CategoryDto> childCategoryList(Long id);
 }
 

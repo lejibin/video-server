@@ -25,6 +25,4 @@ public class UserDto implements Serializable {
 
     private String rule;
 
-    private Boolean status;
-
 }
