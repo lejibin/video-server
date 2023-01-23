@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@TableName("v_Channel")
+@TableName("v_channel")
 @ApiModel(value = "Channel对象", description = "")
 public class Channel implements Serializable {
     private static final long serialVersionUID = 1L;
