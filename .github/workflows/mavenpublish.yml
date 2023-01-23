@@ -20,8 +20,8 @@ jobs:
           MAVEN_USER_PASSWORD: ${{ secrets.MAVEN_USER_PASSWORD }}
         run: |
           ls /usr/share
-          mv /usr/share/apache-maven-3.6.3/conf/settings.xml /usr/share/apache-maven-3.6.3/conf/settings.xml.bak
-          cp maven-settings.xml /usr/share/apache-maven-3.6.3/conf/settings.xml
+          mv /usr/share/apache-maven-3.8.7/conf/settings.xml /usr/share/apache-maven-3.8.7/conf/settings.xml.bak
+          cp maven-settings.xml /usr/share/apache-maven-3.8.7/conf/settings.xml
           mvn clean deploy -DskipTests
           cp target/video-server-0.0.1-SNAPSHOT.jar docker/video-server-0.0.1-SNAPSHOT.jar
           cd docker
