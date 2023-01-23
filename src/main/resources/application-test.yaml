@@ -1,0 +1,22 @@
+server:
+  port: 8088
+spring:
+  application:
+    name: video-server
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/video?serverTimezone=GMT%2B8&characterEncoding=utf-8
+#      url: jdbc:mysql://123.60.158.168:3306/video?serverTimezone=GMT%2B8&characterEncoding=utf-8
+      username: root
+      password: Ljb@314159265
+  jackson:
+    default-property-inclusion: ALWAYS
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

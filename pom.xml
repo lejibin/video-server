@@ -90,5 +90,14 @@
             </plugin>
         </plugins>
     </build>
-
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://packages.aliyun.com/maven/repository/2068835-release-MVzQXI/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://packages.aliyun.com/maven/repository/2068835-snapshot-xJeOCf/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
