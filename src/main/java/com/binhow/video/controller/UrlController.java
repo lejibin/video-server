@@ -3,16 +3,12 @@ package com.binhow.video.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.binhow.video.entity.Dto.UrlDto;
 import com.binhow.video.entity.Url;
-import com.binhow.video.service.IUrlService;
 import com.binhow.video.service.impl.UrlServiceImpl;
 import com.binhow.video.vo.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -29,6 +25,7 @@ import java.util.stream.Collectors;
 @Api(tags = "链接模块")
 @RestController
 @RequestMapping("/url")
+@CrossOrigin
 public class UrlController {
     @Resource
     private UrlServiceImpl urlService;

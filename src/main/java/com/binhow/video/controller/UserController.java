@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Api(tags = "用户模块")
 @RestController
 @RequestMapping("/user")
+@CrossOrigin
 public class UserController {
     @Resource
     private IUserService iUserService;

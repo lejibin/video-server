@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Api(tags = "视频模块")
 @RestController
 @RequestMapping("/video")
+@CrossOrigin
 public class VideoController {
     @Resource
     private VideoServiceImpl videoService;

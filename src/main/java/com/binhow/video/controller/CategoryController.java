@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Api(tags = "分类模块")
 @RestController
 @RequestMapping("/category")
+@CrossOrigin
 public class CategoryController {
     @Resource
     private CategoryServiceImpl categoryService;

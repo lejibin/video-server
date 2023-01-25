@@ -8,6 +8,7 @@ import com.binhow.video.vo.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Api(tags = "频道模块")
 @RestController
 @RequestMapping("/channel")
+@CrossOrigin
 public class ChannelController {
     @Resource
     private ChannelServiceImpl channelService;
