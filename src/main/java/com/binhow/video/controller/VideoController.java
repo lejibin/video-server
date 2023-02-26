@@ -57,7 +57,7 @@ public class VideoController {
 
     @ApiOperation("获取视频信息")
     @GetMapping
-    public R video(@RequestParam(required = false) Long id, @RequestParam(required = false) Long channelId, @RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long areaId, @RequestParam(required = false) Long languageId, @RequestParam(required = false) Long artorId, @RequestParam(required = false) String year, @RequestParam(required = false, defaultValue = "1") Integer pageNo, @RequestParam(required = false, defaultValue = "50") Integer pageSize) {
+    public R video(@RequestParam(required = false) Long id, @RequestParam(required = false) Long channelId, @RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long areaId, @RequestParam(required = false) Long languageId, @RequestParam(required = false) Long artorId, @RequestParam(required = false) String year, @RequestParam(required = false, defaultValue = "1") Integer pageNo, @RequestParam(required = false, defaultValue = "30") Integer pageSize) {
         // 查询单个视频详细信息
         QueryWrapper<Video> wrapper = wrapper();
         if (id != null) {
@@ -141,9 +141,12 @@ public class VideoController {
 
     @ApiOperation("搜索视频信息")
     @GetMapping("/search")
-    private R search(@RequestParam String s) {
+    private R search(@RequestParam String s, @RequestParam(required = false, defaultValue = "1") Integer pageNo, @RequestParam(required = false, defaultValue = "30") Integer pageSize) {
         QueryWrapper<Video> wrapper = wrapper().like("name", s);
-        Page<Video> page = new Page<>(1, 50);
+        if (pageSize > 100) {
+            pageSize = 100;
+        }
+        Page<Video> page = new Page<>(pageNo, pageSize);
         List<Artor> artorList = artorService.list(new QueryWrapper<Artor>().like("name", s).eq("status", 1));
         List<Long> artorIdList = artorList.stream().map(Artor::getId).collect(Collectors.toList());
         List<Long> videoIdList = new ArrayList<>();
